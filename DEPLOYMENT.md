@@ -59,6 +59,8 @@ This guide will walk you through deploying **Data Brew AI** to Render.
    | `NODE_ENV` | `production` |
    | `PORT` | `10000` |
 
+   **Note:** The `VITE_GEMINI_API_KEY` is only used server-side and users will never see a popup requesting an API key.
+
 5. **Deploy**
     - Click "Create Web Service"
     - Render will automatically build and deploy your app
@@ -74,6 +76,9 @@ This guide will walk you through deploying **Data Brew AI** to Render.
 2. Sign in with your Google account
 3. Click "Create API Key"
 4. Copy the key and add it to your Render environment variables
+
+**Important:** The API key is stored server-side only. Users of your deployed app will never be prompted for an API
+key - all AI features work automatically using the key you configure in Render.
 
 ## ⚙️ Configuration Files
 

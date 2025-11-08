@@ -123,13 +123,6 @@ export function ChatInterface({ data, onQuery, isConnected = false, charts, setC
   }, [messages, isLoading])
 
   async function queryGemini(query: string, data: any[]): Promise<{ response: string, charts?: ChartConfig[] }> {
-    let apiKey = (window as any).GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY
-    if (!apiKey) {
-      apiKey = prompt("Enter your Gemini API Key:")
-      ;(window as any).GEMINI_API_KEY = apiKey
-    }
-    if (!apiKey) throw new Error("No Gemini API key provided.")
-
     const sampleRows = data.slice(0, 50)
     
     const promptText = `
@@ -314,8 +307,8 @@ INSTRUCTIONS:
 6. Generate the JSON response now.
     `.trim()
 
-    const model = 'gemini-2.0-flash-exp';
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    // Use server proxy instead of direct API call
+    const apiUrl = '/api/generate';
 
     const res = await fetch(apiUrl, {
         method: 'POST',
