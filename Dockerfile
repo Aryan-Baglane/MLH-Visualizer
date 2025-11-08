@@ -1,29 +1,34 @@
 # Multi-stage Dockerfile
-# Builder stage: install deps and build the Vite app
+# ----------------------
+# Stage 1 — Build the Vite frontend
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# copy package manifest first to leverage docker layer cache
+# Copy manifest files
 COPY package.json package-lock.json* ./
-# copy everything (we need source to build)
+
+# Install all dependencies (including dev)
+RUN npm install --silent
+
+# Copy the rest of the source code
 COPY . .
 
-# Install dependencies and build
-RUN npm ci --silent
+# Build the frontend
 RUN npm run build
 
-# Runner stage: only production deps + built assets + server
+# ----------------------
+# Stage 2 — Production runner
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 
-# Copy server code and built frontend
+# Copy necessary files from builder
 COPY --from=builder /app/server ./server
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production --silent
+# ✅ Use npm install (not ci) since we may not have lockfile in final stage
+RUN npm install --only=production --silent
 
 EXPOSE 3001
 CMD ["node", "server/index.js"]
