@@ -1,73 +1,245 @@
-# Welcome to your Lovable project
+# Data Brew AI
 
-## Project info
+An AI-powered data analysis platform that transforms CSV data into actionable insights with beautiful visualizations,
+intelligent chat, and forecasting capabilities.
 
-**URL**: https://lovable.dev/projects/4ab6b04e-7517-4e02-9c40-e6c9f6574ec7
+![License](https://img.shields.io/badge/license-MIT-green)
+![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
+![React](https://img.shields.io/badge/react-18.3-blue)
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- **Auto-Generated Dashboards** - Upload CSV and get instant visualizations
+- **AI Chat Assistant** - Ask questions about your data in natural language
+- **Smart Forecasting** - AI-powered predictions using linear regression
+- **Multiple Chart Types** - Line, Bar, Pie, Area, and Scatter charts
+- **Dynamic Insights** - Real-time statistical analysis and key findings
+- **PDF Export** - Download your dashboards as professional reports
+- **Dark Mode** - Beautiful UI with theme support
+- **Visual Forecast Distinction** - Dashed lines and different colors for predictions
 
-**Use Lovable**
+## Quick Deploy to Render
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/4ab6b04e-7517-4e02-9c40-e6c9f6574ec7) and start prompting.
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com)
 
-Changes made via Lovable will be committed automatically to this repo.
+**Ready to deploy?** Check out our comprehensive [Deployment Guide](DEPLOYMENT.md)
 
-**Use your preferred IDE**
+## Quick Start (Local Development)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- Node.js 18+ installed
+- A Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey)
 
-Follow these steps:
+### Installation
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/data-brew-ai.git
+cd data-brew-ai
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Create .env file
+cp .env.example .env
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Add your Gemini API key to .env
+# VITE_GEMINI_API_KEY=your_key_here
+
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Production Build
 
-**Use GitHub Codespaces**
+```bash
+# Build for production
+npm run build
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Start production server
+npm start
+```
 
-## What technologies are used for this project?
+The app will be available at [http://localhost:3001](http://localhost:3001)
 
-This project is built with:
+## Deployment
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+This project is ready to deploy to Render with zero configuration!
 
-## How can I deploy this project?
+See the detailed [Deployment Guide](DEPLOYMENT.md) for step-by-step instructions.
 
-Simply open [Lovable](https://lovable.dev/projects/4ab6b04e-7517-4e02-9c40-e6c9f6574ec7) and click on Share -> Publish.
+**Quick Deploy Steps:**
 
-## Can I connect a custom domain to my Lovable project?
+1. Push to GitHub
+2. Connect to Render
+3. Add `VITE_GEMINI_API_KEY` environment variable
+4. Deploy!
 
-Yes, you can!
+## Intelligent Chat Interface
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+The AI chat assistant automatically decides whether to generate visualizations or provide text-only responses based on
+your query.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Queries That Generate Charts:
+
+**Visualization requests:**
+
+- "Show me sales trends"
+- "Visualize revenue by category"
+- "Create charts for the data"
+
+**Analysis requests:**
+
+- "Analyze the data"
+- "Give me insights"
+
+### Queries That Return Text Only:
+
+**Statistical questions:**
+
+- "What is the average sales?"
+- "Calculate total revenue"
+
+**Counting questions:**
+
+- "How many products sold over 1000 units?"
+
+## Chart Features
+
+### Chart Types
+
+- **Line Charts** - Time-based trends and forecasts
+- **Bar Charts** - Categorical comparisons
+- **Pie Charts** - Proportions and distributions
+- **Area Charts** - Cumulative trends
+- **Scatter Charts** - Correlation analysis
+
+### Forecast Feature
+
+Click the "Forecast" button on any Line, Bar, or Area chart to:
+
+- Generate AI-powered predictions using linear regression
+- See forecasted values in **dashed orange lines** (vs solid blue for actual data)
+- View trend direction and percentage change in insights
+- Get realistic predictions with 30% extension of historical data
+
+### Dynamic Insights
+
+Each chart includes 3-5 automatically generated insights:
+
+**Line Charts:**
+
+- Overall trend with growth/decline percentage
+- Peak value identification
+- Average value and distribution
+- Volatility analysis
+
+**Bar Charts:**
+
+- Top performer with percentage
+- Bottom performer
+- Top categories concentration
+- Performance gap analysis
+
+**Pie Charts:**
+
+- Dominant segment percentage
+- Distribution balance
+- Top 3 concentration
+
+## Tech Stack
+
+- **Frontend:** React 18, TypeScript, Vite
+- **UI Components:** Radix UI, Tailwind CSS, shadcn/ui
+- **Charts:** Recharts
+- **AI:** Google Gemini 2.0 Flash
+- **Backend:** Node.js HTTP Server
+- **PDF Export:** jsPDF, html2canvas
+
+## Project Structure
+
+```
+data-brew-ai/
+├── src/
+│   ├── components/
+│   │   ├── auto-dashboard.tsx    # Dashboard with charts
+│   │   ├── chat-interface.tsx    # AI chat component
+│   │   ├── data-profile.tsx      # Data analysis view
+│   │   └── ui/                   # Reusable UI components
+│   ├── pages/
+│   │   └── Index.tsx             # Main page
+│   └── App.tsx                   # App entry point
+├── server/
+│   └── index.js                  # Production server
+├── public/                       # Static assets
+├── render.yaml                   # Render config
+├── DEPLOYMENT.md                 # Deployment guide
+└── package.json                  # Dependencies
+```
+
+## Screenshots
+
+### Dashboard View
+
+Auto-generated charts with insights
+
+### Chat Interface
+
+Ask questions in natural language
+
+### Forecast Feature
+
+Visual distinction between actual and predicted data
+
+## Environment Variables
+
+```bash
+# Required
+VITE_GEMINI_API_KEY=your_gemini_api_key
+
+# Optional
+PORT=3001
+NODE_ENV=production
+```
+
+## Available Scripts
+
+```bash
+npm run dev        # Start development server
+npm run build      # Build for production
+npm start          # Start production server
+npm run preview    # Preview production build
+npm run lint       # Run ESLint
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Acknowledgments
+
+- [Google Gemini](https://ai.google.dev/) for AI capabilities
+- [Recharts](https://recharts.org/) for beautiful charts
+- [Radix UI](https://www.radix-ui.com/) for accessible components
+- [Tailwind CSS](https://tailwindcss.com/) for styling
+- [shadcn/ui](https://ui.shadcn.com/) for UI components
+
+## Support
+
+For issues and questions:
+
+- Check the [Deployment Guide](DEPLOYMENT.md)
+- Review browser console for errors
+- Verify Gemini API key is valid
+- Check Render logs if deployed
+
+---
+**Made with using AI-powered data analysis**
+

@@ -51,7 +51,7 @@ export function DataProfile({ data, columns, correlations }: DataProfileProps) {
     <div className="space-y-6">
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
+        <Card className="animate-fade-up">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Rows</CardTitle>
             <Database className="h-4 w-4 text-muted-foreground" />
@@ -61,7 +61,7 @@ export function DataProfile({ data, columns, correlations }: DataProfileProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-fade-up">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Columns</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
@@ -71,7 +71,7 @@ export function DataProfile({ data, columns, correlations }: DataProfileProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-fade-up">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Data Quality</CardTitle>
             {overallQuality >= 80 ? (
@@ -86,7 +86,7 @@ export function DataProfile({ data, columns, correlations }: DataProfileProps) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-fade-up">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Insights Ready</CardTitle>
             <TrendingUp className="h-4 w-4 text-success" />
@@ -99,7 +99,7 @@ export function DataProfile({ data, columns, correlations }: DataProfileProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Column Types Distribution */}
-        <Card>
+        <Card className="animate-fade-up">
           <CardHeader>
             <CardTitle>Column Types Distribution</CardTitle>
           </CardHeader>
@@ -110,7 +110,7 @@ export function DataProfile({ data, columns, correlations }: DataProfileProps) {
                   <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                   <XAxis dataKey="type" />
                   <YAxis />
-                  <Bar dataKey="count" radius={4}>
+                  <Bar dataKey="count" radius={4} isAnimationActive={true} animationDuration={900} animationEasing="ease-out">
                     {chartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
@@ -122,14 +122,14 @@ export function DataProfile({ data, columns, correlations }: DataProfileProps) {
         </Card>
 
         {/* Column Details */}
-        <Card>
+        <Card className="animate-fade-up">
           <CardHeader>
             <CardTitle>Column Analysis</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4 max-h-64 overflow-y-auto">
               {columns.map((column, index) => (
-                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50">
+                <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 animate-fade-up" style={{ animationDelay: `${index * 60}ms` }}>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-medium">{column.name}</span>
@@ -170,7 +170,7 @@ export function DataProfile({ data, columns, correlations }: DataProfileProps) {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {correlations.slice(0, 6).map((corr, index) => (
-                <div key={index} className="p-4 rounded-lg bg-secondary/50">
+                <div key={index} className="p-4 rounded-lg bg-secondary/50 animate-fade-up" style={{ animationDelay: `${index * 80}ms` }}>
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="font-medium text-sm">{corr.x} ↔ {corr.y}</p>

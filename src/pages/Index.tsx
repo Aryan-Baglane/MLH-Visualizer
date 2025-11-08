@@ -7,10 +7,26 @@ import { FileUpload } from "@/components/ui/file-upload"
 import { DataProfile } from "@/components/data-profile"
 import { AutoDashboard } from "@/components/auto-dashboard"
 import { ChatInterface } from "@/components/chat-interface"
-import { ForecastingPanel } from "@/components/forecasting-panel"
-import { Brain, Upload, BarChart3, MessageCircle, TrendingUp, Sparkles, Zap } from "lucide-react"
+
+import { Brain, Upload, BarChart3, MessageCircle, TrendingUp, Sparkles, Zap, X } from "lucide-react"
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip
+} from 'recharts'
 import { useToast } from "@/hooks/use-toast"
-import heroImage from "@/assets/hero-data-bg.jpg"
+
 
 interface ColumnInfo {
   name: string
@@ -40,7 +56,9 @@ interface ChartConfig {
 }
 
 const Index = () => {
+  const COLORS = ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#84cc16', '#f97316']
   const [uploadedData, setUploadedData] = useState<any[] | null>(null)
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null)
   const [columns, setColumns] = useState<ColumnInfo[]>([])
   const [charts, setCharts] = useState<ChartConfig[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
@@ -189,6 +207,9 @@ const Index = () => {
   }, [])
 
   const handleFileUpload = async (file: File) => {
+    // remember the filename so user can remove it
+    setUploadedFileName(file.name)
+
     setIsProcessing(true)
     
     try {
@@ -240,6 +261,17 @@ const Index = () => {
     }
   }
 
+  const removeUploadedFile = () => {
+    // Soft reset app state back to import-ready
+    setUploadedData(null)
+    setColumns([])
+    setCharts([])
+    setUploadedFileName(null)
+    setActiveTab("upload")
+    // bring user to top (upload area)
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const handleRegenerateCharts = () => {
     if (!uploadedData || !columns) return
     
@@ -262,15 +294,41 @@ const Index = () => {
     })
   }
 
+  // Handler for chat chart updates
+  const handleChatChartsUpdate = (newCharts: ChartConfig[]) => {
+    setCharts(newCharts)
+    setActiveTab("dashboard")
+  }
+
+  // Temporary charts from chat (preview only)
+  const [chatTempCharts, setChatTempCharts] = useState<ChartConfig[] | null>(null)
+  const [chatTempTitle, setChatTempTitle] = useState<string | null>(null)
+
+  const handleTempCharts = (newCharts: ChartConfig[], title?: string) => {
+    setChatTempCharts(newCharts)
+    setChatTempTitle(title || null)
+    // show profile tab so user immediately sees them
+    setActiveTab('profile')
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <div 
-        className="relative bg-cover bg-center bg-no-repeat py-20 px-4"
-        style={{ 
-          backgroundImage: `linear-gradient(rgba(2, 41, 142, 0.85), rgba(59, 130, 246, 0.85)), url(${heroImage})` 
-        }}
+        className="relative bg-gradient-to-b from-blue-600/70 to-blue-500/30 py-10 px-3 min-h-[10vh] flex items-center"
       >
+        {uploadedData && uploadedFileName && (
+          <div className="absolute top-4 right-4 z-20">
+            <button
+              onClick={removeUploadedFile}
+              className="inline-flex items-center gap-2 rounded-md bg-white/10 hover:bg-white/20 text-white px-3 py-1 text-sm"
+            >
+              <X className="h-4 w-4" />
+              Remove CSV
+            </button>
+          </div>
+        )}
+
         <div className="container mx-auto text-center text-white">
           <div className="flex justify-center mb-6">
             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3">
@@ -282,10 +340,10 @@ const Index = () => {
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+          <h1 className="text-3xl md:text-4xl font-bold mb-6 leading-tight">
             From Data to
-            <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-              {" "}Insights{" "}
+            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+              {" " }Insights{" " }
             </span>
             in Minutes
           </h1>
@@ -295,24 +353,7 @@ const Index = () => {
             The fastest way from raw data to actionable business intelligence.
           </p>
 
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-              <Upload className="h-5 w-5" />
-              <span>Magic Upload</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-              <BarChart3 className="h-5 w-5" />
-              <span>Auto-Dashboard</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-              <TrendingUp className="h-5 w-5" />
-              <span>ARIMA Forecasting</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-              <MessageCircle className="h-5 w-5" />
-              <span>AI Assistant</span>
-            </div>
-          </div>
+          
         </div>
       </div>
 
@@ -320,10 +361,12 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5 max-w-2xl mx-auto">
-            <TabsTrigger value="upload" className="flex items-center gap-2">
-              <Upload className="h-4 w-4" />
-              Upload
-            </TabsTrigger>
+            {!uploadedData && (
+              <TabsTrigger value="upload" className="flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                Upload
+              </TabsTrigger>
+            )}
             <TabsTrigger value="profile" disabled={!uploadedData}>
               <Brain className="h-4 w-4" />
               Profile
@@ -332,18 +375,11 @@ const Index = () => {
               <BarChart3 className="h-4 w-4" />
               Dashboard
             </TabsTrigger>
-            <TabsTrigger value="forecast" disabled={!uploadedData}>
-              <TrendingUp className="h-4 w-4" />
-              Forecast
-            </TabsTrigger>
-            <TabsTrigger value="chat" disabled={!uploadedData}>
-              <MessageCircle className="h-4 w-4" />
-              Chat
-            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="upload" className="space-y-6">
-            <Card className="max-w-2xl mx-auto">
+          {!uploadedData && (
+            <TabsContent value="upload" className="space-y-6">
+              <Card className="max-w-2xl mx-auto">
               <CardHeader className="text-center">
                 <CardTitle className="flex items-center justify-center gap-2 text-2xl">
                   <Sparkles className="h-6 w-6 text-primary" />
@@ -392,14 +428,87 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">Ask questions about your data in natural language</p>
               </Card>
             </div>
-          </TabsContent>
+            </TabsContent>
+          )}
 
           <TabsContent value="profile">
             {uploadedData && columns.length > 0 ? (
-              <DataProfile 
-                data={uploadedData} 
-                columns={columns}
-              />
+              <>
+                {/* Temporary Chat Results Preview */}
+                {chatTempCharts && chatTempCharts.length > 0 && (
+                  <Card className="mb-6">
+                    <CardHeader className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-sm">Chat Results{chatTempTitle ? ` — ${chatTempTitle.slice(0, 80)}` : ''}</CardTitle>
+                      </div>
+                      <div>
+                        <Button variant="ghost" size="sm" onClick={() => { setChatTempCharts(null); setChatTempTitle(null) }}>Dismiss</Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {chatTempCharts.map((chart) => (
+                          <div key={chart.id} className="h-48 bg-secondary/10 p-2 rounded">
+                            {chart.type === 'line' && (
+                              <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={chart.data}>
+                                  <CartesianGrid strokeDasharray="3 3" className="opacity-20" />
+                                  <XAxis dataKey={chart.xKey} />
+                                  <YAxis />
+                                  <Tooltip />
+                                  <Line type="monotone" dataKey={chart.yKey as string} stroke="#2563eb" strokeWidth={2} dot={false} />
+                                </LineChart>
+                              </ResponsiveContainer>
+                            )}
+                            {chart.type === 'bar' && (
+                              <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={chart.data}>
+                                  <XAxis dataKey={chart.xKey} />
+                                  <YAxis />
+                                  <Tooltip />
+                                  <Bar dataKey={chart.yKey as string} radius={4}>
+                                    {chart.data.map((_, idx) => (
+                                      <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+                                    ))}
+                                  </Bar>
+                                </BarChart>
+                              </ResponsiveContainer>
+                            )}
+                            {chart.type === 'area' && (
+                              <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={chart.data}>
+                                  <XAxis dataKey={chart.xKey} />
+                                  <YAxis />
+                                  <Tooltip />
+                                  <Area type="monotone" dataKey={chart.yKey as string} stroke="#2563eb" fill="#2563eb22" />
+                                </AreaChart>
+                              </ResponsiveContainer>
+                            )}
+                            {chart.type === 'pie' && (
+                              <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                  <Pie data={chart.data} dataKey={chart.yKey} cx="50%" cy="50%" outerRadius={60} fill="#8884d8">
+                                    {chart.data.map((_, idx) => (
+                                      <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
+                                    ))}
+                                  </Pie>
+                                  <Tooltip />
+                                </PieChart>
+                              </ResponsiveContainer>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <DataProfile 
+                  data={uploadedData} 
+                  columns={columns}
+                />
+              </>
             ) : (
               <Card>
                 <CardContent className="text-center py-16">
@@ -419,24 +528,20 @@ const Index = () => {
             />
           </TabsContent>
 
-          <TabsContent value="forecast">
-            <ForecastingPanel 
-              data={uploadedData || undefined}
-              timeColumn={columns.find(c => c.type === 'temporal')?.name}
-              targetColumn={columns.find(c => c.type === 'numerical')?.name}
-            />
-          </TabsContent>
 
-          <TabsContent value="chat">
-            <div className="max-w-4xl mx-auto">
-              <ChatInterface 
-                data={uploadedData || undefined}
-                isConnected={false}
-              />
-            </div>
-          </TabsContent>
+
+          {/* Chat is now a floating widget rendered globally below */}
         </Tabs>
       </div>
+
+        {/* Global floating chat widget (bottom-right) */}
+        <ChatInterface 
+          data={uploadedData || undefined}
+          isConnected={false}
+          charts={charts}
+          setCharts={setCharts}
+          onChartsUpdate={handleChatChartsUpdate}
+        />
 
       {/* Footer */}
       <footer className="border-t mt-16 py-8">
